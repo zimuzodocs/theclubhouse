@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" fill="none">
+  <!-- Background -->
+  <rect width="400" height="120" fill="#0a0510" rx="16"/>
+
+  <!-- Keyhole icon -->
+  <!-- Outer circle -->
+  <circle cx="52" cy="48" r="22" fill="none" stroke="url(#goldGrad)" stroke-width="3"/>
+  <!-- Inner circle (hole) -->
+  <circle cx="52" cy="48" r="9" fill="url(#goldGrad)"/>
+  <!-- Keyhole drop -->
+  <path d="M44 64 L52 84 L60 64 Q52 58 44 64Z" fill="url(#goldGrad)"/>
+  <!-- Subtle glow ring -->
+  <circle cx="52" cy="48" r="28" fill="none" stroke="rgba(245,158,11,0.15)" stroke-width="1.5"/>
+
+  <!-- Wordmark -->
+  <!-- "The" -->
+  <text x="96" y="44" font-family="Georgia, 'Times New Roman', serif" font-size="18" font-weight="400" fill="rgba(254,249,240,0.5)" letter-spacing="3">THE</text>
+  <!-- "Clubhouse" -->
+  <text x="94" y="80" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="700" fill="#fef9f0" letter-spacing="-0.5">Clubhouse</text>
+
+  <!-- Gradient defs -->
+  <defs>
+    <linearGradient id="goldGrad" x1="30" y1="26" x2="74" y2="84" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+</svg>
