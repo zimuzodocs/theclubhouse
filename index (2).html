@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Clubhouse — Games Night, Together</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <style>
+    :root {
+      --deep:     #0a0510;
+      --plum:     #1a0a2e;
+      --purple:   #6b21a8;
+      --violet:   #9333ea;
+      --lavender: #c084fc;
+      --gold:     #f59e0b;
+      --amber:    #fbbf24;
+      --cream:    #fef9f0;
+      --muted:    #a78bfa;
+      --card-bg:  rgba(107,33,168,0.1);
+      --card-border: rgba(192,132,252,0.18);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--deep); color: var(--cream);
+      font-family: 'DM Sans', sans-serif; font-weight: 300;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: 0;
+      opacity: 0.3;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    /* BLOBS */
+    .blob { position:fixed;border-radius:50%;filter:blur(130px);pointer-events:none;z-index:0;animation:drift 20s ease-in-out infinite; }
+    .blob-1{width:650px;height:650px;background:rgba(107,33,168,0.32);top:-220px;left:-180px;animation-delay:0s;}
+    .blob-2{width:420px;height:420px;background:rgba(245,158,11,0.14);top:45%;right:-120px;animation-delay:-7s;}
+    .blob-3{width:520px;height:520px;background:rgba(147,51,234,0.18);bottom:-180px;left:25%;animation-delay:-13s;}
+    @keyframes drift{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(28px,-18px) scale(1.04);}66%{transform:translate(-18px,28px) scale(0.96);}}
+
+    .wrap { position:relative;z-index:1; }
+
+    /* NAV */
+    nav {
+      display:flex;align-items:center;justify-content:space-between;
+      padding:26px 60px;position:fixed;top:0;left:0;right:0;z-index:100;
+      background:linear-gradient(to bottom,rgba(10,5,16,0.96) 55%,transparent);
+      backdrop-filter:blur(10px);
+    }
+    .nav-logo{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:900;color:var(--cream);letter-spacing:-0.02em;}
+    .nav-logo span{color:var(--amber);}
+    .nav-links{display:flex;gap:36px;list-style:none;}
+    .nav-links a{color:var(--muted);font-size:0.8rem;text-decoration:none;letter-spacing:0.06em;text-transform:uppercase;transition:color 0.2s;}
+    .nav-links a:hover{color:var(--cream);}
+    .nav-cta{background:var(--gold);color:var(--deep);border:none;border-radius:100px;padding:10px 26px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+    .nav-cta:hover{background:var(--amber);transform:translateY(-1px);}
+
+    /* HERO */
+    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:140px 24px 100px;}
+    .hero-eyebrow{font-family:'Space Mono',monospace;font-size:0.72rem;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:26px;opacity:0;animation:fadeUp 0.8s ease forwards 0.2s;}
+    .hero-title{font-family:'Playfair Display',serif;font-size:clamp(3.2rem,9.5vw,7.5rem);font-weight:900;line-height:0.9;letter-spacing:-0.03em;margin-bottom:30px;opacity:0;animation:fadeUp 0.9s ease forwards 0.4s;}
+    .hero-title em{font-style:italic;color:var(--lavender);display:block;}
+    .hero-subtitle{font-size:clamp(0.95rem,2.2vw,1.2rem);color:rgba(254,249,240,0.6);max-width:500px;line-height:1.75;margin-bottom:52px;opacity:0;animation:fadeUp 0.9s ease forwards 0.6s;}
+    .hero-actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;opacity:0;animation:fadeUp 0.9s ease forwards 0.8s;}
+    .btn-primary{background:var(--gold);color:var(--deep);border:none;border-radius:100px;padding:15px 40px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:1rem;cursor:pointer;transition:all 0.2s;}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(245,158,11,0.35);}
+    .btn-secondary{background:transparent;color:var(--cream);border:1.5px solid rgba(192,132,252,0.35);border-radius:100px;padding:15px 40px;font-family:'DM Sans',sans-serif;font-weight:400;font-size:1rem;cursor:pointer;transition:all 0.2s;}
+    .btn-secondary:hover{border-color:var(--lavender);background:rgba(192,132,252,0.08);transform:translateY(-2px);}
+    .join-bar{display:flex;align-items:center;background:rgba(255,255,255,0.04);border:1px solid rgba(192,132,252,0.18);border-radius:100px;overflow:hidden;margin-top:28px;opacity:0;animation:fadeUp 0.9s ease forwards 1s;}
+    .join-input{background:transparent;border:none;outline:none;color:var(--cream);font-family:'Space Mono',monospace;font-size:0.95rem;letter-spacing:0.22em;text-transform:uppercase;padding:13px 24px;width:176px;text-align:center;}
+    .join-input::placeholder{color:rgba(254,249,240,0.25);}
+    .join-btn{background:var(--violet);border:none;color:#fff;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.88rem;padding:13px 26px;cursor:pointer;transition:background 0.2s;}
+    .join-btn:hover{background:var(--purple);}
+
+    /* MARQUEE */
+    .marquee-wrap{overflow:hidden;border-top:1px solid rgba(192,132,252,0.12);border-bottom:1px solid rgba(192,132,252,0.12);padding:16px 0;margin-bottom:110px;}
+    .marquee-track{display:flex;gap:56px;animation:marquee 30s linear infinite;width:max-content;}
+    .marquee-item{font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;color:rgba(192,132,252,0.45);white-space:nowrap;display:flex;align-items:center;gap:20px;}
+    .marquee-item::after{content:'✦';color:var(--gold);font-style:normal;font-size:0.55rem;}
+    @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+    /* SECTION COMMON */
+    .section-wrap{padding:0 60px 120px;max-width:1100px;margin:0 auto;}
+    .section-label{font-family:'Space Mono',monospace;font-size:0.68rem;letter-spacing:0.22em;color:var(--gold);text-transform:uppercase;margin-bottom:18px;}
+    .section-title{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4vw,3rem);font-weight:900;line-height:1.08;margin-bottom:64px;}
+    .section-title em{font-style:italic;color:var(--lavender);}
+
+    /* HOW IT WORKS */
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;}
+    .step{padding:36px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;transition:transform 0.3s,border-color 0.3s;}
+    .step:hover{transform:translateY(-6px);border-color:rgba(192,132,252,0.4);}
+    .step-number{font-family:'Playfair Display',serif;font-size:3.8rem;font-weight:900;color:rgba(192,132,252,0.12);line-height:1;margin-bottom:22px;}
+    .step h3{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-bottom:10px;}
+    .step p{font-size:0.88rem;line-height:1.75;color:rgba(254,249,240,0.55);}
+
+    /* ═══════════════════════════════
+       GAME CARDS
+    ═══════════════════════════════ */
+    .games-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+
+    .game-card{
+      background:var(--card-bg);
+      border:1px solid var(--card-border);
+      border-radius:22px;padding:0;
+      cursor:pointer;overflow:hidden;
+      transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      position:relative;
+    }
+    .game-card:hover{transform:translateY(-10px) scale(1.01);border-color:rgba(192,132,252,0.5);}
+
+    /* Visual stage — the animated area */
+    .game-visual{
+      height:180px;position:relative;overflow:hidden;
+      display:flex;align-items:center;justify-content:center;
+    }
+
+    .game-info{padding:24px 26px 28px;}
+    .game-tag{font-family:'Space Mono',monospace;font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;display:inline-block;padding:4px 10px;border-radius:100px;border:1px solid;}
+    .game-name{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;margin-bottom:8px;}
+    .game-desc{font-size:0.85rem;line-height:1.65;color:rgba(254,249,240,0.5);}
+
+    /* ── 1. TRIVIA NIGHT ── */
+    .visual-trivia{background:linear-gradient(145deg,#0a0a1a 0%,#0f1535 100%);}
+    .trivia-ring{
+      position:absolute;border-radius:50%;border:2px solid;
+      animation:triviaRing 2.4s ease-in-out infinite;
+      opacity:0;
+    }
+    .trivia-ring:nth-child(1){width:50px;height:50px;border-color:rgba(245,158,11,0.8);animation-delay:0s;}
+    .trivia-ring:nth-child(2){width:90px;height:90px;border-color:rgba(245,158,11,0.45);animation-delay:0.4s;}
+    .trivia-ring:nth-child(3){width:130px;height:130px;border-color:rgba(245,158,11,0.2);animation-delay:0.8s;}
+    .trivia-ring:nth-child(4){width:170px;height:170px;border-color:rgba(245,158,11,0.08);animation-delay:1.2s;}
+    @keyframes triviaRing{0%{transform:scale(0.6);opacity:0.9;}100%{transform:scale(1.4);opacity:0;}}
+    .trivia-q{
+      position:relative;z-index:2;
+      font-family:'Playfair Display',serif;font-style:italic;
+      font-size:4.5rem;font-weight:900;
+      color:var(--amber);
+      text-shadow:0 0 40px rgba(245,158,11,0.6);
+      animation:triviaQ 3s ease-in-out infinite;
+    }
+    @keyframes triviaQ{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+
+    /* ── 2. POWERPOINT PARTY ── */
+    .visual-ppt{background:linear-gradient(145deg,#0d0820 0%,#160830 100%);}
+    .ppt-slide{
+      position:absolute;
+      border-radius:6px;
+      border:1.5px solid rgba(192,132,252,0.4);
+      background:rgba(107,33,168,0.2);
+      transition:all 0.3s;
+    }
+    .ppt-slide:nth-child(1){width:110px;height:78px;transform:rotate(-8deg) translate(-30px,10px);animation:pptSlide1 3s ease-in-out infinite;}
+    .ppt-slide:nth-child(2){width:110px;height:78px;transform:rotate(-3deg) translate(-10px,5px);animation:pptSlide2 3s ease-in-out infinite;}
+    .ppt-slide:nth-child(3){width:110px;height:78px;transform:rotate(2deg) translate(10px,0px);z-index:3;background:rgba(147,51,234,0.3);border-color:rgba(192,132,252,0.7);animation:pptSlide3 3s ease-in-out infinite;}
+    .ppt-lines{position:absolute;top:16px;left:16px;right:16px;}
+    .ppt-line{height:2px;border-radius:2px;background:rgba(192,132,252,0.5);margin-bottom:5px;}
+    .ppt-line:first-child{width:70%;background:rgba(245,158,11,0.7);}
+    .ppt-spotlight{
+      position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);
+      width:60px;height:120px;
+      background:linear-gradient(to top,rgba(245,158,11,0.15),transparent);
+      clip-path:polygon(30% 100%,70% 100%,100% 0%,0% 0%);
+      animation:spotlight 3s ease-in-out infinite;
+    }
+    @keyframes pptSlide1{0%,100%{transform:rotate(-8deg) translate(-30px,10px);}50%{transform:rotate(-10deg) translate(-34px,14px);}}
+    @keyframes pptSlide2{0%,100%{transform:rotate(-3deg) translate(-10px,5px);}50%{transform:rotate(-4deg) translate(-12px,7px);}}
+    @keyframes pptSlide3{0%,100%{transform:rotate(2deg) translate(10px,0px);}50%{transform:rotate(3deg) translate(12px,-2px);}}
+    @keyframes spotlight{0%,100%{opacity:0.7;}50%{opacity:1;}}
+
+    /* ── 3. MURDER MYSTERY ── */
+    .visual-murder{background:linear-gradient(145deg,#080408 0%,#120010 100%);}
+    .candle-body{
+      position:relative;z-index:2;
+      width:22px;height:70px;
+      background:linear-gradient(to top,#e8c87a,#f5e0a0);
+      border-radius:4px 4px 2px 2px;
+      box-shadow:0 0 20px rgba(245,200,80,0.15);
+    }
+    .candle-wick{
+      position:absolute;top:-10px;left:50%;transform:translateX(-50%);
+      width:2px;height:10px;
+      background:#333;border-radius:2px;
+    }
+    .flame-outer{
+      position:absolute;top:-42px;left:50%;transform:translateX(-50%);
+      width:20px;height:36px;
+      background:radial-gradient(ellipse at 50% 80%,#ff9900,#ff5500 40%,transparent 80%);
+      border-radius:50% 50% 30% 30%;
+      animation:flicker 0.15s ease-in-out infinite alternate;
+      filter:blur(1px);
+    }
+    .flame-inner{
+      position:absolute;top:-30px;left:50%;transform:translateX(-50%);
+      width:10px;height:22px;
+      background:radial-gradient(ellipse at 50% 80%,#fff7aa,#ffdd00);
+      border-radius:50% 50% 30% 30%;
+      animation:flickerInner 0.12s ease-in-out infinite alternate;
+    }
+    .candle-glow{
+      position:absolute;top:-50px;left:50%;transform:translateX(-50%);
+      width:80px;height:80px;
+      background:radial-gradient(circle,rgba(255,150,0,0.25) 0%,transparent 70%);
+      animation:glow 2s ease-in-out infinite;
+    }
+    .candle-shadow{
+      position:absolute;bottom:0;right:-40px;
+      width:3px;height:100px;
+      background:rgba(0,0,0,0.6);
+      transform-origin:bottom center;
+      animation:shadow 3s ease-in-out infinite;
+      border-radius:2px;
+    }
+    .wax-drip{position:absolute;width:6px;border-radius:0 0 4px 4px;background:rgba(240,220,160,0.8);}
+    .wax-drip:nth-child(1){height:14px;left:2px;top:8px;}
+    .wax-drip:nth-child(2){height:9px;right:4px;top:14px;}
+    @keyframes flicker{from{transform:translateX(-50%) skewX(-3deg) scaleX(0.95);}to{transform:translateX(-50%) skewX(3deg) scaleX(1.05);}}
+    @keyframes flickerInner{from{transform:translateX(-50%) scaleX(0.9);}to{transform:translateX(-50%) scaleX(1.1);}}
+    @keyframes glow{0%,100%{opacity:0.7;transform:translateX(-50%) scale(1);}50%{opacity:1;transform:translateX(-50%) scale(1.2);}}
+    @keyframes shadow{0%,100%{transform:rotate(-8deg);}50%{transform:rotate(8deg);}}
+
+    /* ── 4. CARPET CALL ── */
+    .visual-carpet{background:linear-gradient(145deg,#150008 0%,#200010 100%);}
+    .carpet-strip{
+      position:absolute;bottom:0;left:0;right:0;height:60px;
+      background:linear-gradient(to right,#8b0000,#cc0000,#8b0000);
+      opacity:0.8;
+    }
+    .carpet-rope{position:absolute;bottom:55px;}
+    .carpet-rope-l{left:60px;width:2px;height:40px;background:rgba(245,158,11,0.6);}
+    .carpet-rope-r{right:60px;width:2px;height:40px;background:rgba(245,158,11,0.6);}
+    .camera{
+      position:relative;z-index:3;
+      display:flex;flex-direction:column;align-items:center;
+    }
+    .camera-body{
+      width:54px;height:38px;
+      background:linear-gradient(145deg,#2a2a2a,#111);
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.1);
+      position:relative;display:flex;align-items:center;justify-content:center;
+    }
+    .camera-lens{
+      width:22px;height:22px;border-radius:50%;
+      background:radial-gradient(circle at 35% 35%,#1a3a6a,#050d1a);
+      border:2px solid #444;
+      box-shadow:inset 0 0 6px rgba(0,100,255,0.3),0 0 8px rgba(0,0,0,0.5);
+    }
+    .camera-flash{
+      position:absolute;top:4px;right:6px;
+      width:8px;height:6px;
+      background:#f5e0a0;border-radius:2px;
+    }
+    .flash-burst{
+      position:absolute;top:-30px;left:50%;transform:translateX(-50%);
+      width:120px;height:120px;
+      background:radial-gradient(circle,rgba(255,255,255,0.9) 0%,rgba(255,255,220,0.3) 30%,transparent 65%);
+      border-radius:50%;
+      animation:flashBurst 2.5s ease-in-out infinite;
+      opacity:0;
+    }
+    @keyframes flashBurst{0%,70%,100%{opacity:0;transform:translateX(-50%) scale(0.5);}75%{opacity:1;transform:translateX(-50%) scale(1);}85%{opacity:0.3;}}
+
+    /* ── 5. PARTY GAMES ── */
+    .visual-party{background:linear-gradient(145deg,#040d1a 0%,#071428 100%);}
+    .die{
+      position:relative;z-index:2;
+      width:68px;height:68px;
+      background:linear-gradient(145deg,#1a3a7a,#0d2050);
+      border-radius:14px;
+      border:2px solid rgba(34,197,255,0.4);
+      display:grid;grid-template-columns:1fr 1fr 1fr;
+      grid-template-rows:1fr 1fr 1fr;
+      gap:4px;padding:10px;
+      box-shadow:0 0 30px rgba(34,197,255,0.15),inset 0 1px 0 rgba(255,255,255,0.1);
+      animation:dieRoll 3s ease-in-out infinite;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:radial-gradient(circle at 35% 35%,#7de8ff,#22d3ee);
+      box-shadow:0 0 6px rgba(34,211,238,0.8);
+      align-self:center;justify-self:center;
+    }
+    .dot.hidden{opacity:0;}
+    .die-glow{
+      position:absolute;
+      width:120px;height:120px;
+      background:radial-gradient(circle,rgba(34,197,255,0.2) 0%,transparent 65%);
+      animation:dieGlow 3s ease-in-out infinite;
+    }
+    @keyframes dieRoll{
+      0%,100%{transform:rotate(0deg);}
+      20%{transform:rotate(-5deg) scale(0.95);}
+      40%{transform:rotate(360deg) scale(1.05);}
+      60%,80%{transform:rotate(360deg);}
+    }
+    @keyframes dieGlow{0%,100%{opacity:0.5;transform:scale(1);}50%{opacity:1;transform:scale(1.2);}}
+
+    /* ── 6. BOARD GAMES ── */
+    .visual-board{background:linear-gradient(145deg,#020c08 0%,#041408 100%);}
+    .chess-piece{
+      position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;
+    }
+    .piece-top{
+      width:24px;height:24px;border-radius:50%;
+      background:linear-gradient(145deg,#e8e0d0,#c8bfa8);
+      border:2px solid rgba(255,255,255,0.2);
+      box-shadow:0 2px 8px rgba(0,0,0,0.5);
+      position:relative;
+    }
+    .piece-top::after{
+      content:'✕';
+      position:absolute;inset:0;
+      display:flex;align-items:center;justify-content:center;
+      font-size:0.7rem;color:rgba(0,0,0,0.2);
+    }
+    .piece-neck{width:12px;height:12px;background:linear-gradient(145deg,#d0c8b8,#b8afa0);clip-path:polygon(20% 0%,80% 0%,100% 100%,0% 100%);}
+    .piece-body{width:38px;height:22px;background:linear-gradient(145deg,#e0d8c8,#c0b8a8);border-radius:4px 4px 0 0;box-shadow:0 4px 12px rgba(0,0,0,0.4);}
+    .piece-base{width:52px;height:10px;background:linear-gradient(145deg,#d8d0c0,#b0a898);border-radius:0 0 6px 6px;}
+    .king-halo{
+      position:absolute;
+      width:100px;height:100px;
+      border:1px solid rgba(74,222,128,0.2);
+      border-radius:50%;
+      animation:haloSpin 8s linear infinite;
+    }
+    .king-halo-2{
+      position:absolute;
+      width:140px;height:140px;
+      border:1px solid rgba(74,222,128,0.1);
+      border-radius:50%;
+      animation:haloSpin 12s linear infinite reverse;
+    }
+    .board-dots{position:absolute;inset:0;overflow:hidden;}
+    .board-dot{
+      position:absolute;width:4px;height:4px;border-radius:50%;
+      background:rgba(74,222,128,0.4);
+      animation:boardDotPulse 2s ease-in-out infinite;
+    }
+    @keyframes haloSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+    @keyframes boardDotPulse{0%,100%{opacity:0.3;}50%{opacity:1;}}
+
+    /* TAGS */
+    .tag-gold   {color:var(--gold);  border-color:rgba(245,158,11,0.35); background:rgba(245,158,11,0.08);}
+    .tag-violet {color:var(--lavender);border-color:rgba(139,92,246,0.35);background:rgba(139,92,246,0.08);}
+    .tag-red    {color:#f87171;      border-color:rgba(239,68,68,0.35);  background:rgba(239,68,68,0.08);}
+    .tag-pink   {color:#f472b6;      border-color:rgba(236,72,153,0.35); background:rgba(236,72,153,0.08);}
+    .tag-cyan   {color:#22d3ee;      border-color:rgba(6,182,212,0.35);  background:rgba(6,182,212,0.08);}
+    .tag-green  {color:#4ade80;      border-color:rgba(34,197,94,0.35);  background:rgba(34,197,94,0.08);}
+
+    /* BANNER */
+    .banner-section{padding:0 60px 120px;max-width:1100px;margin:0 auto;}
+    .banner-inner{
+      background:linear-gradient(135deg,rgba(107,33,168,0.28) 0%,rgba(245,158,11,0.1) 100%);
+      border:1px solid rgba(192,132,252,0.22);border-radius:28px;
+      padding:68px 76px;display:flex;align-items:center;gap:72px;
+      position:relative;overflow:hidden;
+    }
+    .banner-inner::before{content:'';position:absolute;width:380px;height:380px;background:radial-gradient(circle,rgba(245,158,11,0.13) 0%,transparent 70%);right:-80px;top:-80px;pointer-events:none;}
+    .banner-text{flex:1;}
+    .banner-text h2{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3.2vw,2.6rem);font-weight:900;line-height:1.15;margin-bottom:18px;}
+    .banner-text h2 em{font-style:italic;color:var(--amber);}
+    .banner-text p{font-size:0.95rem;line-height:1.75;color:rgba(254,249,240,0.55);max-width:420px;margin-bottom:34px;}
+    .banner-house{font-size:0;position:relative;flex-shrink:0;}
+    /* Animated house SVG */
+    .house-svg{width:120px;height:120px;filter:drop-shadow(0 0 28px rgba(245,158,11,0.25));animation:houseFloat 4s ease-in-out infinite;}
+    @keyframes houseFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+
+    /* FOOTER */
+    footer{border-top:1px solid rgba(192,132,252,0.1);padding:48px 60px;display:flex;align-items:center;justify-content:space-between;}
+    .footer-logo{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:900;color:rgba(254,249,240,0.35);}
+    .footer-logo span{color:rgba(245,158,11,0.55);}
+    .footer-note{font-size:0.75rem;color:rgba(254,249,240,0.22);font-family:'Space Mono',monospace;letter-spacing:0.05em;}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(26px);}to{opacity:1;transform:translateY(0);}}
+
+    @media(max-width:900px){
+      nav{padding:18px 24px;} .nav-links{display:none;}
+      .section-wrap,.banner-section{padding-left:20px;padding-right:20px;}
+      .steps{grid-template-columns:1fr;gap:18px;}
+      .games-grid{grid-template-columns:1fr 1fr;}
+      .banner-inner{flex-direction:column;padding:44px 32px;gap:28px;}
+      footer{flex-direction:column;gap:14px;text-align:center;padding:36px 20px;}
+    }
+    @media(max-width:560px){
+      .games-grid{grid-template-columns:1fr;}
+      .hero-actions{flex-direction:column;align-items:center;}
+    }
+  </style>
+</head>
+<body>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<div class="wrap">
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">
+      <img src="logo.svg" alt="The Clubhouse" style="height:56px;display:block;min-width:200px;" />
+    </div>
+    <ul class="nav-links">
+      <li><a href="#games">Games</a></li>
+      <li><a href="#how">How it works</a></li>
+    </ul>
+    <button class="nav-cta" id="nav-create">Create a Room</button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-eyebrow">✦ For every group chat that deserves a real night ✦</p>
+    <h1 class="hero-title">Games night,<br /><em>wherever you are.</em></h1>
+    <p class="hero-subtitle">The Clubhouse brings your people together — miles apart, same room energy. Six games. One link. No downloads.</p>
+    <div class="hero-actions">
+      <button class="btn-primary create-btn">Create a Room</button>
+      <button class="btn-secondary" onclick="document.getElementById('games').scrollIntoView({behavior:'smooth'})">See the Games</button>
+    </div>
+    <div class="join-bar">
+      <input class="join-input" type="text" placeholder="ROOM CODE" maxlength="6" />
+      <button class="join-btn">Join →</button>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span class="marquee-item">Trivia Night</span><span class="marquee-item">PowerPoint Party</span><span class="marquee-item">Murder Mystery</span><span class="marquee-item">Carpet Call</span><span class="marquee-item">Party Games</span><span class="marquee-item">Board Games</span><span class="marquee-item">Trivia Night</span><span class="marquee-item">PowerPoint Party</span><span class="marquee-item">Murder Mystery</span><span class="marquee-item">Carpet Call</span><span class="marquee-item">Party Games</span><span class="marquee-item">Board Games</span>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="section-wrap" id="how">
+    <p class="section-label">01 — How it works</p>
+    <h2 class="section-title">Three steps to<br /><em>game night.</em></h2>
+    <div class="steps">
+      <div class="step"><div class="step-number">01</div><h3>Create a Room</h3><p>One person opens The Clubhouse and hits create. They get a six-digit code — no sign-up, no faff.</p></div>
+      <div class="step"><div class="step-number">02</div><h3>Share the Code</h3><p>Drop it in the group chat. Everyone joins from their phone, laptop, or tablet — wherever they are in the world.</p></div>
+      <div class="step"><div class="step-number">03</div><h3>Pick a Game & Play</h3><p>The host picks a game and every screen syncs instantly. Same moment, same chaos, completely live.</p></div>
+    </div>
+  </section>
+
+  <!-- GAMES -->
+  <section class="section-wrap" id="games">
+    <p class="section-label">02 — The Lineup</p>
+    <h2 class="section-title">Six ways to<br /><em>cause a scene.</em></h2>
+    <div class="games-grid">
+
+      <!-- 1. TRIVIA -->
+      <div class="game-card">
+        <div class="game-visual visual-trivia">
+          <div class="trivia-ring"></div>
+          <div class="trivia-ring"></div>
+          <div class="trivia-ring"></div>
+          <div class="trivia-ring"></div>
+          <div class="trivia-q">?</div>
+        </div>
+        <div class="game-info">
+          <div class="game-tag tag-gold">Classic</div>
+          <div class="game-name">Trivia Night</div>
+          <p class="game-desc">Host picks a pack, questions hit every screen at once. Answer fast, score higher. Chaos is guaranteed.</p>
+        </div>
+      </div>
+
+      <!-- 2. POWERPOINT PARTY -->
+      <div class="game-card">
+        <div class="game-visual visual-ppt">
+          <div class="ppt-spotlight"></div>
+          <div class="ppt-slide"></div>
+          <div class="ppt-slide"></div>
+          <div class="ppt-slide">
+            <div class="ppt-lines">
+              <div class="ppt-line"></div>
+              <div class="ppt-line" style="width:50%"></div>
+              <div class="ppt-line" style="width:80%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="game-info">
+          <div class="game-tag tag-violet">Chaotic</div>
+          <div class="game-name">PowerPoint Party</div>
+          <p class="game-desc">Everyone submits a 5-slide deck on a random topic. The host plays them. The group judges. Tears may happen.</p>
+        </div>
+      </div>
+
+      <!-- 3. MURDER MYSTERY -->
+      <div class="game-card">
+        <div class="game-visual visual-murder">
+          <div class="candle-glow"></div>
+          <div style="position:relative;display:flex;flex-direction:column;align-items:center;">
+            <div class="flame-outer"></div>
+            <div class="flame-inner"></div>
+            <div class="candle-body">
+              <div class="candle-wick"></div>
+              <div class="wax-drip"></div>
+              <div class="wax-drip"></div>
+            </div>
+            <div class="candle-shadow"></div>
+          </div>
+        </div>
+        <div class="game-info">
+          <div class="game-tag tag-red">Dramatic</div>
+          <div class="game-name">Murder Mystery</div>
+          <p class="game-desc">Roles are assigned. Clues drop. Accusations fly. One of you did it — and nobody can be trusted.</p>
+        </div>
+      </div>
+
+      <!-- 4. CARPET CALL -->
+      <div class="game-card">
+        <div class="game-visual visual-carpet">
+          <div class="flash-burst"></div>
+          <div class="carpet-rope carpet-rope-l"></div>
+          <div class="carpet-rope carpet-rope-r"></div>
+          <div class="camera">
+            <div class="camera-body">
+              <div class="camera-lens"></div>
+              <div class="camera-flash"></div>
+            </div>
+          </div>
+          <div class="carpet-strip"></div>
+        </div>
+        <div class="game-info">
+          <div class="game-tag tag-pink">Opinionated</div>
+          <div class="game-name">Carpet Call</div>
+          <p class="game-desc">Rate red carpet looks in real time. Serve, Mid, or Crime Scene — everyone votes before the reveal.</p>
+        </div>
+      </div>
+
+      <!-- 5. PARTY GAMES -->
+      <div class="game-card">
+        <div class="game-visual visual-party">
+          <div class="die-glow"></div>
+          <div class="die">
+            <div class="dot"></div>
+            <div class="dot hidden"></div>
+            <div class="dot"></div>
+            <div class="dot hidden"></div>
+            <div class="dot"></div>
+            <div class="dot hidden"></div>
+            <div class="dot"></div>
+            <div class="dot hidden"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+        <div class="game-info">
+          <div class="game-tag tag-cyan">Unhinged</div>
+          <div class="game-name">Party Games</div>
+          <p class="game-desc">Truth or dare, hot takes, most likely to — prompt-based chaos that works for every group dynamic.</p>
+        </div>
+      </div>
+
+      <!-- 6. BOARD GAMES -->
+      <div class="game-card">
+        <div class="game-visual visual-board">
+          <div class="board-dots">
+            <div class="board-dot" style="left:20%;top:30%;animation-delay:0s;"></div>
+            <div class="board-dot" style="left:75%;top:20%;animation-delay:0.4s;"></div>
+            <div class="board-dot" style="left:60%;top:70%;animation-delay:0.8s;"></div>
+            <div class="board-dot" style="left:15%;top:65%;animation-delay:1.2s;"></div>
+            <div class="board-dot" style="left:85%;top:55%;animation-delay:0.6s;"></div>
+          </div>
+          <div class="king-halo-2"></div>
+          <div class="king-halo"></div>
+          <div class="chess-piece">
+            <div class="piece-top"></div>
+            <div class="piece-neck"></div>
+            <div class="piece-body"></div>
+            <div class="piece-base"></div>
+          </div>
+        </div>
+        <div class="game-info">
+          <div class="game-tag tag-green">Strategic</div>
+          <div class="game-name">Board Games</div>
+          <p class="game-desc">Digital adaptations of your favourites. Wordplay, bluffing, strategy — the friendships will be tested.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- BANNER -->
+  <div class="banner-section">
+    <div class="banner-inner">
+      <div class="banner-text">
+        <h2>No downloads.<br />No accounts.<br /><em>Just show up.</em></h2>
+        <p>The Clubhouse lives entirely in your browser. Share a code, join a room, and your whole group is in — instantly. Works on any device, any timezone, any gc energy.</p>
+        <button class="btn-primary create-btn">Create Your First Room</button>
+      </div>
+      <div class="banner-house">
+        <svg class="house-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Glow -->
+          <circle cx="60" cy="65" r="45" fill="rgba(245,158,11,0.08)"/>
+          <!-- Walls -->
+          <rect x="22" y="58" width="76" height="50" rx="4" fill="#1a0a2e" stroke="rgba(192,132,252,0.4)" stroke-width="1.5"/>
+          <!-- Roof -->
+          <polygon points="14,60 60,18 106,60" fill="#2d1060" stroke="rgba(192,132,252,0.5)" stroke-width="1.5" stroke-linejoin="round"/>
+          <!-- Door -->
+          <rect x="50" y="84" width="20" height="24" rx="10" fill="rgba(245,158,11,0.2)" stroke="rgba(245,158,11,0.5)" stroke-width="1.5"/>
+          <!-- Window L -->
+          <rect x="28" y="70" width="18" height="16" rx="3" fill="rgba(192,132,252,0.15)" stroke="rgba(192,132,252,0.4)" stroke-width="1"/>
+          <line x1="37" y1="70" x2="37" y2="86" stroke="rgba(192,132,252,0.3)" stroke-width="0.8"/>
+          <line x1="28" y1="78" x2="46" y2="78" stroke="rgba(192,132,252,0.3)" stroke-width="0.8"/>
+          <!-- Window R -->
+          <rect x="74" y="70" width="18" height="16" rx="3" fill="rgba(192,132,252,0.15)" stroke="rgba(192,132,252,0.4)" stroke-width="1"/>
+          <line x1="83" y1="70" x2="83" y2="86" stroke="rgba(192,132,252,0.3)" stroke-width="0.8"/>
+          <line x1="74" y1="78" x2="92" y2="78" stroke="rgba(192,132,252,0.3)" stroke-width="0.8"/>
+          <!-- Chimney -->
+          <rect x="72" y="26" width="12" height="20" rx="2" fill="#2d1060" stroke="rgba(192,132,252,0.4)" stroke-width="1.5"/>
+          <!-- Smoke -->
+          <circle cx="75" cy="20" r="3" fill="rgba(192,132,252,0.2)" style="animation: smokeRise 2s ease-in-out infinite"/>
+          <circle cx="79" cy="14" r="4" fill="rgba(192,132,252,0.12)" style="animation: smokeRise 2s ease-in-out infinite 0.4s"/>
+          <circle cx="76" cy="8" r="5" fill="rgba(192,132,252,0.06)" style="animation: smokeRise 2s ease-in-out infinite 0.8s"/>
+          <!-- Star -->
+          <circle cx="60" cy="38" r="3" fill="rgba(245,158,11,0.8)"/>
+        </svg>
+        <style>
+          @keyframes smokeRise { 0%,100%{opacity:0.3;transform:translateY(0);} 50%{opacity:0.8;transform:translateY(-4px);} }
+        </style>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">The <span>Clubhouse</span></div>
+    <div class="footer-note">For grown kids who found their people.</div>
+  </footer>
+
+</div>
+
+<script>
+  document.addEventListener('mousemove', (e) => {
+    const x = (e.clientX / window.innerWidth - 0.5) * 28;
+    const y = (e.clientY / window.innerHeight - 0.5) * 28;
+    document.querySelector('.blob-1').style.transform = `translate(${x*0.5}px,${y*0.5}px)`;
+    document.querySelector('.blob-2').style.transform = `translate(${-x*0.3}px,${-y*0.3}px)`;
+    document.querySelector('.blob-3').style.transform = `translate(${x*0.2}px,${y*0.4}px)`;
+  });
+
+  const joinInput = document.querySelector('.join-input');
+  joinInput.addEventListener('input', () => { joinInput.value = joinInput.value.toUpperCase(); });
+
+  document.querySelector('.join-btn').addEventListener('click', () => {
+    const code = joinInput.value.trim();
+    if (code.length === 6) {
+      window.location.href = `room.html?code=${code}`;
+    } else {
+      joinInput.placeholder = 'Need 6 digits!';
+      setTimeout(() => { joinInput.placeholder = 'ROOM CODE'; }, 1800);
+    }
+  });
+
+  function createRoom() {
+    window.location.href = 'room.html?new=true';
+  }
+  document.querySelectorAll('.create-btn, #nav-create').forEach(b => b.addEventListener('click', createRoom));
+
+  // Scroll reveal
+  const els = document.querySelectorAll('.step, .game-card');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  els.forEach((el, i) => {
+    el.style.opacity='0'; el.style.transform='translateY(30px)';
+    el.style.transition=`opacity 0.55s ease ${i*0.06}s, transform 0.55s ease ${i*0.06}s`;
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>
